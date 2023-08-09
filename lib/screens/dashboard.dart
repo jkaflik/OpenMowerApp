@@ -18,24 +18,9 @@ class Dashboard extends GetView<RobotStateController> {
   @override
   Widget build(BuildContext context) {
     return n.Column([
-      const RobotStateWidget(),
       n.Stack([
         const MapWidget(centerOnRobot: false),
-        n.Column([
-            Card(
-              elevation: 3,
-              child: n.Column([
-                "Current State:".bodyLarge..m = 4,
-                Obx(() => controller.robotState.value.currentState.h4..m = 4)
-              ])
-                ..p = 16
-                ..mainAxisAlignment = MainAxisAlignment.start
-                ..crossAxisAlignment = CrossAxisAlignment.start
-                ..fullWidth,
-            ),
-          ])
-            ..p = 16
-            ..expanded,
+        const RobotStateWidget(),
       ])
         ..expanded,
       Material(elevation: 5, child: Obx(() => getButtonPanel(context, controller)))
@@ -69,6 +54,17 @@ class Dashboard extends GetView<RobotStateController> {
               ..expanded
               ..elevation = 2
               ..p = 16),
+        n.Button.elevatedIcon(
+            "Skip area".n, n.Icon(Icons.route))
+          ..visible = controller
+              .hasAction("mower_logic:mowing/skip_area")
+          ..onPressed = () {
+            remoteControl
+                .callAction("mower_logic:mowing/skip_area");
+          }
+          ..style = n.ButtonStyle(backgroundColor: Colors.orangeAccent)
+          ..elevation = 2
+          ..p = 16,
         n.Button.elevatedIcon("Stop".n, n.Icon(Icons.home))
           ..enable = controller.hasAction("mower_logic:mowing/abort_mowing")
           ..onPressed = () {
@@ -163,6 +159,45 @@ class Dashboard extends GetView<RobotStateController> {
               remoteControl
                   .callAction("mower_logic:area_recording/exit_recording_mode");
             }
+            ..elevation = 2
+            ..expanded
+            ..p = 16,
+        ])
+          ..gap = 8
+          ..px = 16
+          ..py = 8,
+        n.Row([
+          controller.hasAction("mower_logic:area_recording/auto_point_collecting_disable")
+              ? (n.Button.elevatedIcon(
+              "Disable auto collecting".n, n.Icon(Icons.route))
+            ..visible = controller
+                .hasAction("mower_logic:area_recording/auto_point_collecting_disable")
+            ..onPressed = () {
+              remoteControl
+                  .callAction("mower_logic:area_recording/auto_point_collecting_disable");
+            }
+            ..style = n.ButtonStyle(backgroundColor: Colors.orangeAccent)
+            ..elevation = 2
+            ..p = 16)
+              : (n.Button.elevatedIcon(
+              "Enable auto collecting".n, n.Icon(Icons.route))
+            ..visible = controller
+                .hasAction("mower_logic:area_recording/auto_point_collecting_enable")
+            ..onPressed = () {
+              remoteControl
+                  .callAction("mower_logic:area_recording/auto_point_collecting_enable");
+            }
+            ..elevation = 2
+            ..p = 16),
+          n.Button.elevatedIcon(
+              "Add point".n, n.Icon(Icons.add_location))
+            ..visible = controller
+                .hasAction("mower_logic:area_recording/collect_point")
+            ..onPressed = () {
+              remoteControl
+                  .callAction("mower_logic:area_recording/collect_point");
+            }
+            ..style = n.ButtonStyle(backgroundColor: Colors.green)
             ..elevation = 2
             ..expanded
             ..p = 16,
